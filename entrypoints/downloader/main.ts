@@ -49,10 +49,11 @@ async function spoofHeaders() {
             { header: 'origin', operation: 'set', value: initiator },
           ],
         },
-        condition: { tabIds: [tab.id], resourceTypes: ['xmlhttprequest'] },
+        condition: { tabIds: [tab.id], requestDomains: [new URL(src).hostname], resourceTypes: ['xmlhttprequest'] },
       },
     ],
   });
+  addEventListener('pagehide', () => void browser.declarativeNetRequest.updateSessionRules({ removeRuleIds: [tab.id!] }));
 }
 
 async function fetchWithRetry(url: string): Promise<Response> {

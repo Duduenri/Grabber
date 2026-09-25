@@ -34,7 +34,7 @@ async function clear(tabId: number) {
 
 export default defineBackground(() => {
   browser.storage.session.setAccessLevel({ accessLevel: 'TRUSTED_CONTEXTS' });
-  browser.action.setBadgeBackgroundColor({ color: '#0a7' });
+  browser.action.setBadgeBackgroundColor({ color: '#029975' });
 
   browser.webRequest.onBeforeRequest.addListener(
     (details) => {
@@ -51,8 +51,16 @@ export default defineBackground(() => {
     { urls: ['<all_urls>'], types: ['xmlhttprequest', 'media', 'other'] },
   );
 
-  browser.tabs.onRemoved.addListener((tabId) => void clear(tabId));
+  const dropHeaderRule = (tabId: number) =>
+    browser.declarativeNetRequest.updateSessionRules({ removeRuleIds: [tabId] }).catch(() => {});
+  const extensionOrigin = browser.runtime.getURL('/');
+
+  browser.tabs.onRemoved.addListener((tabId) => {
+    void clear(tabId);
+    void dropHeaderRule(tabId);
+  });
   browser.tabs.onUpdated.addListener((tabId, info) => {
     if (info.status === 'loading' && info.url) void clear(tabId);
+    if (info.url && !info.url.startsWith(extensionOrigin)) void dropHeaderRule(tabId);
   });
 });
