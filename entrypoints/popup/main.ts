@@ -23,7 +23,18 @@ async function pageTitle(): Promise<string> {
   }
 }
 
-empty.hidden = captures.length > 0;
+const YTDLP_FIRST = /(^|\.)(youtube\.com|youtu\.be|vimeo\.com|instagram\.com|tiktok\.com|x\.com|twitter\.com)$/;
+const pageUrl = tab?.url && /^https?:/.test(tab.url) ? new URL(tab.url) : null;
+const ytdlpFirst = !!pageUrl && YTDLP_FIRST.test(pageUrl.hostname);
+
+if (pageUrl) {
+  document.querySelector<HTMLElement>('#ytdlp')!.hidden = false;
+  if (ytdlpFirst) document.querySelector('#ytdlp-label')!.textContent = `${pageUrl.hostname.replace(/^www\./, '')}: baixar com yt-dlp`;
+  document.querySelector<HTMLButtonElement>('#ytdlp-button')!.onclick = () =>
+    browser.tabs.create({ url: browser.runtime.getURL(`/ytdlp.html?${new URLSearchParams({ url: pageUrl.href })}`) });
+}
+
+empty.hidden = captures.length > 0 || ytdlpFirst;
 
 for (const capture of [...captures].sort((a, b) => a.at - b.at)) {
   const li = document.createElement('li');

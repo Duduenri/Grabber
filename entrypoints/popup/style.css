@@ -6,3 +6,5 @@ li { display: flex; gap: 8px; align-items: center; background: #1d1d1d; border-r
 .name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #bbb; }
 button { background: #0a7; color: #fff; border: 0; border-radius: 4px; padding: 5px 10px; cursor: pointer; }
 p { color: #999; }
+section { display: flex; gap: 8px; align-items: center; background: #1d1d1d; border: 1px solid #0a7; border-radius: 6px; padding: 8px; margin-bottom: 8px; }
+section span { flex: 1; color: #bbb; }

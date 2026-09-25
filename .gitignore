@@ -2,3 +2,4 @@ node_modules
 .output
 .wxt
 *.html.local
+native-host/run.sh

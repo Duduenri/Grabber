@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Grabber · yt-dlp</title>
+    <link rel="stylesheet" href="../downloader/style.css" />
+  </head>
+  <body>
+    <main>
+      <h1>Grabber · yt-dlp</h1>
+      <label>URL <input id="url" readonly /></label>
+      <label>Formato
+        <select id="preset">
+          <option value="mp4-1080">MP4 até 1080p (compatível com tudo)</option>
+          <option value="mp4-720">MP4 até 720p (menor)</option>
+          <option value="best">Melhor qualidade (MKV, pode ser 4K/VP9/AV1)</option>
+          <option value="audio">Só áudio (M4A)</option>
+        </select>
+      </label>
+      <button id="start" disabled>Verificando yt-dlp…</button>
+      <progress id="progress" value="0" max="100" hidden></progress>
+      <pre id="log"></pre>
+    </main>
+    <footer>Desenvolvido por <a href="https://www.linkedin.com/in/duduenri" target="_blank" rel="noopener">Eduardo Enrique</a></footer>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>
