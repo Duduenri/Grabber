@@ -10,3 +10,5 @@ ol li { display: flex; gap: 8px; padding: 8px 10px; background: #1d1d1d; border-
 ol li.playing { outline: 1px solid #029975; }
 ol li .name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 ol li .meta { color: #777; font-size: 12px; }
+.notice { background: #1d1d1d; border: 1px solid #029975; border-radius: 8px; padding: 12px; }
+.notice button { margin-left: 8px; padding: 4px 10px; }

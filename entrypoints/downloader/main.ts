@@ -12,7 +12,19 @@ const formatSelect = $<HTMLSelectElement>('#format');
 const startButton = $<HTMLButtonElement>('#start');
 const progress = $<HTMLProgressElement>('#progress');
 const logBox = $<HTMLPreElement>('#log');
-$<HTMLButtonElement>('#open-player').onclick = () => browser.tabs.create({ url: browser.runtime.getURL('/player.html') });
+let lastVideo: { blob: Blob; name: string } | null = null;
+$<HTMLButtonElement>('#open-player').onclick = () => {
+  if (!lastVideo) return void browser.tabs.create({ url: browser.runtime.getURL('/player.html') });
+  const video = lastVideo;
+  const channelId = crypto.randomUUID();
+  const channel = new BroadcastChannel(channelId);
+  channel.onmessage = (e) => {
+    if (e.data !== 'ready') return;
+    channel.postMessage(video);
+    channel.close();
+  };
+  void browser.tabs.create({ url: browser.runtime.getURL(`/player.html?channel=${channelId}`) });
+};
 
 const params = new URLSearchParams(location.search);
 const src = params.get('src')!;
@@ -166,6 +178,7 @@ async function run(videoUrl: string, audioUrl?: string) {
 }
 
 function showPlayer(track: Track) {
+  lastVideo = { blob: track.blob, name: `${sanitize(nameInput.value)}.${track.ext}` };
   if (track.ext !== 'ts') {
     const preview = $<HTMLVideoElement>('#preview');
     preview.src = URL.createObjectURL(track.blob);

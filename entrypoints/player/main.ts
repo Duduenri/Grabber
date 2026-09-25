@@ -7,7 +7,9 @@ const video = $<HTMLVideoElement>('#video');
 const speeds = $<HTMLDivElement>('#speeds');
 const list = $<HTMLOListElement>('#list');
 
-let files: File[] = [];
+type Item = { name: string; key: string; size?: number; source: Blob | string };
+
+let items: Item[] = [];
 let current = -1;
 let currentUrl: string | null = null;
 
@@ -24,7 +26,9 @@ const storageSet = (key: string, value: string) => {
   } catch {}
 };
 
-const positionKey = (f: File) => `pos:${f.name}:${f.size}`;
+const positionKey = (item: Item) => `pos:${item.key}`;
+const fromFile = (file: Blob, name: string): Item => ({ name, key: `${name}:${file.size}`, size: file.size, source: file });
+const fileUrl = (path: string) => 'file://' + path.split('/').map(encodeURIComponent).join('/');
 
 const formatTime = (s: number) => {
   const m = Math.floor(s / 60);
@@ -33,16 +37,17 @@ const formatTime = (s: number) => {
 
 function renderList() {
   list.replaceChildren(
-    ...files.map((file, i) => {
+    ...items.map((item, i) => {
       const li = document.createElement('li');
       li.className = i === current ? 'playing' : '';
       const name = document.createElement('span');
       name.className = 'name';
-      name.textContent = file.name;
+      name.textContent = item.name;
       const meta = document.createElement('span');
       meta.className = 'meta';
-      const pos = Number(storageGet(positionKey(file)) ?? 0);
-      meta.textContent = pos > 0 ? `parou em ${formatTime(pos)}` : `${(file.size / 1024 / 1024).toFixed(0)} MB`;
+      const pos = Number(storageGet(positionKey(item)) ?? 0);
+      meta.textContent =
+        pos > 0 ? `parou em ${formatTime(pos)}` : item.size ? `${(item.size / 1024 / 1024).toFixed(0)} MB` : '';
       li.append(name, meta);
       li.onclick = () => play(i);
       return li;
@@ -51,42 +56,47 @@ function renderList() {
 }
 
 function play(index: number) {
-  const file = files[index];
-  if (!file) return;
+  const item = items[index];
+  if (!item) return;
   current = index;
   if (currentUrl) URL.revokeObjectURL(currentUrl);
-  currentUrl = URL.createObjectURL(file);
+  currentUrl = typeof item.source === 'string' ? null : URL.createObjectURL(item.source);
   video.hidden = false;
   speeds.hidden = false;
-  video.src = currentUrl;
+  video.src = currentUrl ?? item.source as string;
   video.playbackRate = Number(storageGet('speed') ?? 1);
-  const pos = Number(storageGet(positionKey(file)) ?? 0);
+  const pos = Number(storageGet(positionKey(item)) ?? 0);
   video.onloadedmetadata = () => {
     if (pos > 0 && pos < video.duration - 5) video.currentTime = pos;
-    void video.play();
+    video.play().catch(() => {});
   };
-  document.title = `${file.name} · Grabber`;
+  video.onerror = () => {
+    if (typeof item.source === 'string') notice('Não consegui abrir o arquivo do disco. Arraste ele aqui.');
+  };
+  document.title = `${item.name} · Grabber`;
   renderList();
 }
 
 function load(newFiles: FileList | null) {
   if (!newFiles?.length) return;
-  files = [...newFiles].sort((a, b) => a.name.localeCompare(b.name, 'pt-BR', { numeric: true }));
+  items = [...newFiles]
+    .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR', { numeric: true }))
+    .map((f) => fromFile(f, f.name));
   play(0);
 }
 
 let lastSave = 0;
 video.ontimeupdate = () => {
-  const file = files[current];
-  if (!file || Date.now() - lastSave < 2000) return;
+  const item = items[current];
+  if (!item || Date.now() - lastSave < 2000) return;
   lastSave = Date.now();
-  storageSet(positionKey(file), String(Math.floor(video.currentTime)));
+  storageSet(positionKey(item), String(Math.floor(video.currentTime)));
 };
 
 video.onended = () => {
-  const file = files[current];
-  if (file) storageSet(positionKey(file), '0');
-  if (current + 1 < files.length) play(current + 1);
+  const item = items[current];
+  if (item) storageSet(positionKey(item), '0');
+  if (current + 1 < items.length) play(current + 1);
   else renderList();
 };
 
@@ -114,3 +124,47 @@ drop.ondrop = (e) => {
   drop.classList.remove('over');
   load(e.dataTransfer?.files ?? null);
 };
+
+const noticeBox = $<HTMLDivElement>('#notice');
+function notice(message: string, action?: { label: string; run: () => void }) {
+  noticeBox.hidden = false;
+  noticeBox.replaceChildren(message);
+  if (action) {
+    const button = document.createElement('button');
+    button.textContent = action.label;
+    button.onclick = action.run;
+    noticeBox.append(' ', button);
+  }
+}
+
+async function openFromParams() {
+  const params = new URLSearchParams(location.search);
+  const channelId = params.get('channel');
+  const path = params.get('path');
+
+  if (channelId) {
+    const channel = new BroadcastChannel(channelId);
+    channel.onmessage = (e: MessageEvent<{ blob: Blob; name: string }>) => {
+      items = [fromFile(e.data.blob, e.data.name)];
+      play(0);
+      channel.close();
+    };
+    channel.postMessage('ready');
+    return;
+  }
+
+  if (path) {
+    const name = path.split('/').pop() ?? path;
+    if (!(await browser.extension.isAllowedFileSchemeAccess())) {
+      notice(`Pra abrir "${name}" direto do disco, ative "Permitir acesso a URLs de arquivo" nos detalhes do Grabber (só uma vez).`, {
+        label: 'Abrir configurações',
+        run: () => void browser.tabs.create({ url: `chrome://extensions/?id=${browser.runtime.id}` }),
+      });
+      return;
+    }
+    items = [{ name, key: path, source: fileUrl(path) }];
+    play(0);
+  }
+}
+
+void openFromParams();
