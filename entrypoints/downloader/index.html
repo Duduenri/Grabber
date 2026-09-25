@@ -9,6 +9,12 @@
     <main>
       <h1>Grabber</h1>
       <label>Nome do arquivo <input id="name" /></label>
+      <label>Formato
+        <select id="format">
+          <option value="mp4">MP4 (recomendado, toca em qualquer player)</option>
+          <option value="ts">TS original (sem conversão)</option>
+        </select>
+      </label>
       <label id="quality-row" hidden>Qualidade <select id="quality"></select></label>
       <button id="start" disabled>Carregando playlist…</button>
       <progress id="progress" value="0" max="1" hidden></progress>

@@ -5,7 +5,7 @@ export default defineConfig({
   manifest: {
     name: 'Grabber',
     description: 'Detecta vídeos (HLS/MP4) na página e baixa localmente',
-    permissions: ['webRequest', 'storage', 'downloads', 'declarativeNetRequestWithHostAccess'],
+    permissions: ['webRequest', 'storage', 'downloads', 'scripting', 'declarativeNetRequestWithHostAccess'],
     host_permissions: ['<all_urls>'],
   },
 });

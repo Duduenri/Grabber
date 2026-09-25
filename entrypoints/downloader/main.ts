@@ -1,4 +1,5 @@
 import { type MediaPlaylist, type Segment, type Variant, parsePlaylist, sequenceIv } from '@/lib/hls';
+import { tsToMp4 } from '@/lib/transmux';
 
 const CONCURRENCY = 6;
 const RETRIES = 3;
@@ -7,6 +8,7 @@ const $ = <T extends HTMLElement>(sel: string) => document.querySelector<T>(sel)
 const nameInput = $<HTMLInputElement>('#name');
 const qualityRow = $<HTMLLabelElement>('#quality-row');
 const qualitySelect = $<HTMLSelectElement>('#quality');
+const formatSelect = $<HTMLSelectElement>('#format');
 const startButton = $<HTMLButtonElement>('#start');
 const progress = $<HTMLProgressElement>('#progress');
 const logBox = $<HTMLPreElement>('#log');
@@ -15,6 +17,15 @@ const params = new URLSearchParams(location.search);
 const src = params.get('src')!;
 const initiator = params.get('initiator');
 nameInput.value = sanitize(params.get('title') ?? 'video');
+
+try {
+  formatSelect.value = localStorage.getItem('format') ?? 'mp4';
+} catch {}
+formatSelect.onchange = () => {
+  try {
+    localStorage.setItem('format', formatSelect.value);
+  } catch {}
+};
 
 const log = (msg: string) => (logBox.textContent += `${msg}\n`);
 
@@ -70,7 +81,9 @@ async function loadMedia(url: string): Promise<MediaPlaylist> {
   return playlist;
 }
 
-async function downloadTrack(media: MediaPlaylist, label: string): Promise<Blob> {
+type Track = { blob: Blob; ext: string };
+
+async function downloadTrack(media: MediaPlaylist, label: string, kind: 'video' | 'audio'): Promise<Track> {
   const keys = new Map<string, Promise<CryptoKey>>();
   const getKey = (uri: string) => {
     if (!keys.has(uri)) {
@@ -111,8 +124,17 @@ async function downloadTrack(media: MediaPlaylist, label: string): Promise<Blob>
     }),
   );
 
-  const init = media.initUri ? [await (await fetchWithRetry(media.initUri)).arrayBuffer()] : [];
-  return new Blob([...init, ...parts], { type: media.initUri ? 'video/mp4' : 'video/mp2t' });
+  if (media.initUri) {
+    const init = await (await fetchWithRetry(media.initUri)).arrayBuffer();
+    return { blob: new Blob([init, ...parts], { type: 'video/mp4' }), ext: kind === 'video' ? 'mp4' : 'm4a' };
+  }
+  if (formatSelect.value === 'mp4') {
+    startButton.textContent = `${label}: convertendo para MP4…`;
+    await new Promise((r) => setTimeout(r));
+    const mp4 = tsToMp4(parts);
+    return { blob: new Blob(mp4 as BlobPart[], { type: 'video/mp4' }), ext: kind === 'video' ? 'mp4' : 'm4a' };
+  }
+  return { blob: new Blob(parts, { type: 'video/mp2t' }), ext: kind === 'video' ? 'ts' : 'aac.ts' };
 }
 
 async function save(blob: Blob, filename: string) {
@@ -125,15 +147,14 @@ async function run(videoUrl: string, audioUrl?: string) {
   startButton.disabled = true;
   const name = sanitize(nameInput.value);
 
-  const video = await loadMedia(videoUrl);
-  const ext = video.initUri ? 'mp4' : 'ts';
-  await save(await downloadTrack(video, 'Vídeo'), `${name}.${ext}`);
+  const video = await downloadTrack(await loadMedia(videoUrl), 'Vídeo', 'video');
+  const ext = video.ext;
+  await save(video.blob, `${name}.${ext}`);
 
   if (audioUrl) {
-    const audio = await loadMedia(audioUrl);
-    const audioExt = audio.initUri ? 'm4a' : 'aac.ts';
-    await save(await downloadTrack(audio, 'Áudio'), `${name}.${audioExt}`);
-    log(`\nÁudio veio separado. Juntar:\nffmpeg -i "${name}.${ext}" -i "${name}.${audioExt}" -c copy "${name}.final.mp4"`);
+    const audio = await downloadTrack(await loadMedia(audioUrl), 'Áudio', 'audio');
+    await save(audio.blob, `${name}.${audio.ext}`);
+    log(`\nÁudio veio separado. Juntar:\nffmpeg -i "${name}.${ext}" -i "${name}.${audio.ext}" -c copy "${name}.final.mp4"`);
   } else if (ext === 'ts') {
     log(`\nConverter pra MP4 (opcional):\nffmpeg -i "${name}.ts" -c copy "${name}.mp4"`);
   }
