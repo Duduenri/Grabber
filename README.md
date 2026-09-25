@@ -21,7 +21,13 @@
 - Saves MP4 by default (TS → MP4 remux in the browser via mux.js, no re-encode) or raw TS
 - YouTube and 1000+ other sites via a local [yt-dlp](https://github.com/yt-dlp/yt-dlp) bridge (Native Messaging)
 
-## Setup
+## Install (release)
+
+1. Download `grabber-<version>-chrome.zip` from [Releases](https://github.com/Duduenri/Grabber/releases/latest) and unzip it to a folder you will keep
+2. Open `chrome://extensions`, enable **Developer mode**, click **Load unpacked** and pick that folder
+3. Optional, for YouTube: download `grabber-native-host-<version>.zip`, unzip it somewhere permanent and run `bash install.sh` (see [YouTube / yt-dlp](#youtube--yt-dlp-optional) for requirements)
+
+## Setup (from source)
 
 ```bash
 npm install
