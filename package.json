@@ -6,8 +6,10 @@
   "scripts": {
     "dev": "wxt",
     "build": "wxt build",
+    "build:firefox": "wxt build -b firefox",
     "compile": "tsc --noEmit",
     "zip": "wxt zip",
+    "zip:firefox": "wxt zip -b firefox",
     "postinstall": "wxt prepare"
   },
   "devDependencies": {

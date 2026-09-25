@@ -9,6 +9,7 @@
 
 <p align="center">
   <img alt="Manifest V3" src="https://img.shields.io/badge/Manifest-V3-029975" />
+  <img alt="Chrome and Firefox" src="https://img.shields.io/badge/Chrome%20%7C%20Firefox-supported-029975" />
   <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-WXT-029975" />
   <img alt="yt-dlp" src="https://img.shields.io/badge/YouTube-yt--dlp-029975" />
 </p>
@@ -31,10 +32,21 @@
 
 ```bash
 npm install
-npm run build
+npm run build          # Chrome  → .output/chrome-mv3
+npm run build:firefox  # Firefox → .output/firefox-mv3
 ```
 
-Open `chrome://extensions`, enable Developer mode, click **Load unpacked** and select `.output/chrome-mv3`.
+**Chrome / Chromium / Brave:** open `chrome://extensions`, enable Developer mode, click **Load unpacked** and select `.output/chrome-mv3`.
+
+**Firefox (140+):** open `about:debugging#/runtime/this-firefox`, click **Load Temporary Add-on…** and pick `.output/firefox-mv3/manifest.json` (temporary add-ons are removed when Firefox closes; for a permanent install, use the signed `.xpi`).
+
+Browser differences:
+
+| | Chrome | Firefox |
+|---|---|---|
+| Extension ID | `cmjilacbcoijmjemgcjpmbndepbibjje` (manifest `key`) | `grabber@duduenri` |
+| Player opens yt-dlp files from disk | yes, after enabling *Allow access to file URLs* | no (browser restriction) — drag the file in |
+| Native host manifest | `~/.config/<browser>/NativeMessagingHosts/` | `~/.mozilla/native-messaging-hosts/` |
 
 ### YouTube / yt-dlp (optional)
 
@@ -48,7 +60,7 @@ YouTube does not serve plain HLS/MP4 (it uses its own streaming protocol with si
    ```
 
 2. Install ffmpeg (merges audio + video): `sudo apt install ffmpeg`
-3. Register the native host for Chrome/Chromium/Brave:
+3. Register the native host for Chrome/Chromium/Brave/Firefox:
 
    ```bash
    ./native-host/install.sh
@@ -94,7 +106,8 @@ DRM-protected streams (Widevine: Netflix, Prime, etc.) are not supported.
 
 ## Scripts
 
-- `npm run build` — production build
+- `npm run build` / `npm run build:firefox` — production build
+- `npm run zip` / `npm run zip:firefox` — store-ready zip (Firefox also gets a sources zip for AMO review)
 - `npm run compile` — type check
 
 ## Project layout
@@ -120,6 +133,8 @@ DRM-protected streams (Widevine: Netflix, Prime, etc.) are not supported.
 | Brand green | `#029975` |
 
 ---
+
+Licensed under [MIT](LICENSE).
 
 <p align="center">
   <img src="assets/brand/logo.png" alt="" width="56" /><br />

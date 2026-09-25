@@ -7,6 +7,8 @@ function classify(url: string): Capture['kind'] | null {
   return null;
 }
 
+const originOf = (url?: string) => (url ? new URL(url).origin : undefined);
+
 const dedupeKey = (url: string) => {
   const u = new URL(url);
   return u.origin + u.pathname;
@@ -33,7 +35,10 @@ async function clear(tabId: number) {
 }
 
 export default defineBackground(() => {
-  browser.storage.session.setAccessLevel({ accessLevel: 'TRUSTED_CONTEXTS' });
+  // Chrome-only API; Firefox already restricts session storage to extension pages
+  if ('setAccessLevel' in browser.storage.session) {
+    void browser.storage.session.setAccessLevel({ accessLevel: 'TRUSTED_CONTEXTS' });
+  }
   browser.action.setBadgeBackgroundColor({ color: '#029975' });
 
   browser.webRequest.onBeforeRequest.addListener(
@@ -44,7 +49,7 @@ export default defineBackground(() => {
       record(details.tabId, {
         url: details.url,
         kind,
-        initiator: details.initiator,
+        initiator: details.initiator ?? originOf((details as { originUrl?: string }).originUrl),
         at: Date.now(),
       });
     },

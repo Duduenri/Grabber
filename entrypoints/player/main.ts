@@ -155,6 +155,10 @@ async function openFromParams() {
 
   if (path) {
     const name = path.split('/').pop() ?? path;
+    if (import.meta.env.FIREFOX) {
+      notice(`O Firefox não deixa extensões abrirem arquivos do disco. Arraste "${name}" (em ${path.slice(0, -name.length - 1)}) aqui.`);
+      return;
+    }
     if (!(await browser.extension.isAllowedFileSchemeAccess())) {
       notice(`Pra abrir "${name}" direto do disco, ative "Permitir acesso a URLs de arquivo" nos detalhes do Grabber (só uma vez).`, {
         label: 'Abrir configurações',
