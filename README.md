@@ -67,6 +67,10 @@ yt-dlp -S "vcodec:h264,res:1080,acodec:m4a" --merge-output-format mp4 "https://w
 | Melhor qualidade | best available (may be 4K VP9/AV1), MKV |
 | Só áudio | M4A |
 
+**Player (offline)**
+
+Popup → **▶ Player**, then pick or drag videos from `~/Downloads`. Plays MP4/WebM (and MKV with H.264) right in Chrome, no system player needed. Remembers where you stopped in each file, auto-plays the next one (files sorted by name) and has 1x–2x speed buttons.
+
 DRM-protected streams (Widevine: Netflix, Prime, etc.) are not supported.
 
 ## Scripts
@@ -82,6 +86,7 @@ DRM-protected streams (Widevine: Netflix, Prime, etc.) are not supported.
 | `entrypoints/popup/` | lists captures + yt-dlp shortcut |
 | `entrypoints/downloader/` | HLS download, AES-128 decrypt, MP4 remux |
 | `entrypoints/ytdlp/` | talks to the native host, shows progress |
+| `entrypoints/player/` | offline player with resume and speed control |
 | `lib/hls.ts` | HLS playlist parser |
 | `lib/transmux.ts` | TS → MP4 via mux.js |
 | `native-host/` | Python yt-dlp bridge + installer |

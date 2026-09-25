@@ -3,6 +3,9 @@ import { getCaptures } from '@/lib/captures';
 const list = document.querySelector<HTMLUListElement>('#list')!;
 const empty = document.querySelector<HTMLParagraphElement>('#empty')!;
 
+document.querySelector<HTMLButtonElement>('#player')!.onclick = () =>
+  browser.tabs.create({ url: browser.runtime.getURL('/player.html') });
+
 const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
 const SUBTITLE = /textstream|subtitle|caption|\.vtt/i;
 const captures = (tab?.id != null ? await getCaptures(tab.id) : []).filter((c) => !SUBTITLE.test(c.url));

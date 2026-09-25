@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Grabber · Player</title>
+    <link rel="stylesheet" href="../downloader/style.css" />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main class="player">
+      <h1>Grabber · Player</h1>
+      <label id="drop" class="drop">
+        <input id="files" type="file" accept="video/*,audio/*,.mkv,.ts" multiple hidden />
+        Clique ou arraste vídeos aqui (ex.: pasta Downloads)
+      </label>
+      <video id="video" controls hidden></video>
+      <div id="speeds" class="speeds" hidden></div>
+      <ol id="list"></ol>
+    </main>
+    <footer>Desenvolvido por <a href="https://www.linkedin.com/in/duduenri" target="_blank" rel="noopener">Eduardo Enrique</a></footer>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

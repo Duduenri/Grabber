@@ -8,3 +8,6 @@ button { background: #0a7; color: #fff; border: 0; border-radius: 4px; padding: 
 p { color: #999; }
 section { display: flex; gap: 8px; align-items: center; background: #1d1d1d; border: 1px solid #0a7; border-radius: 6px; padding: 8px; margin-bottom: 8px; }
 section span { flex: 1; color: #bbb; }
+header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+header h1 { margin: 0; }
+button.link { background: transparent; color: #0a7; padding: 2px 4px; }

@@ -46,6 +46,9 @@ function download() {
       progress.value = 100;
       startButton.textContent = 'Concluído ✓';
       log(`\nSalvo em: ${msg.file ?? '~/Downloads'}`);
+      const openPlayer = $<HTMLButtonElement>('#open-player');
+      openPlayer.hidden = false;
+      openPlayer.onclick = () => browser.tabs.create({ url: browser.runtime.getURL('/player.html') });
     } else if (msg.type === 'error') {
       finished = true;
       startButton.textContent = 'Falhou';

@@ -10,3 +10,5 @@ pre { background: #1d1d1d; border-radius: 6px; padding: 10px; white-space: pre-w
 footer { text-align: center; color: #777; font-size: 12px; padding: 24px 16px; }
 footer a { color: #0a7; text-decoration: none; }
 footer a:hover { text-decoration: underline; }
+button.secondary { background: transparent; border: 1px solid #0a7; color: #0a7; }
+#preview { width: 100%; background: #000; border-radius: 8px; }

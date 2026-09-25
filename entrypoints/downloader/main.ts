@@ -160,6 +160,18 @@ async function run(videoUrl: string, audioUrl?: string) {
   }
 
   startButton.textContent = 'Concluído ✓';
+  showPlayer(video);
+}
+
+function showPlayer(track: Track) {
+  if (track.ext !== 'ts') {
+    const preview = $<HTMLVideoElement>('#preview');
+    preview.src = URL.createObjectURL(track.blob);
+    preview.hidden = false;
+  }
+  const openPlayer = $<HTMLButtonElement>('#open-player');
+  openPlayer.hidden = false;
+  openPlayer.onclick = () => browser.tabs.create({ url: browser.runtime.getURL('/player.html') });
 }
 
 function variantLabel(v: Variant) {

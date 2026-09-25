@@ -1,0 +1,12 @@
+main.player { max-width: 960px; }
+.drop { display: block; border: 2px dashed #333; border-radius: 8px; padding: 24px; text-align: center; color: #999; cursor: pointer; }
+.drop.over { border-color: #0a7; color: #eee; }
+video { width: 100%; max-height: 70vh; background: #000; border-radius: 8px; }
+.speeds { display: flex; gap: 6px; }
+.speeds button { padding: 4px 10px; background: #1d1d1d; border: 1px solid #333; }
+.speeds button.active { background: #0a7; border-color: #0a7; }
+ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 4px; }
+ol li { display: flex; gap: 8px; padding: 8px 10px; background: #1d1d1d; border-radius: 6px; cursor: pointer; }
+ol li.playing { outline: 1px solid #0a7; }
+ol li .name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+ol li .meta { color: #777; font-size: 12px; }
