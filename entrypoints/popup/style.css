@@ -2,12 +2,14 @@ body { width: 360px; margin: 0; padding: 12px; font: 13px system-ui, sans-serif;
 h1 { font-size: 15px; margin: 0 0 8px; }
 ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
 li { display: flex; gap: 8px; align-items: center; background: #1d1d1d; border-radius: 6px; padding: 8px; }
-.tag { font-size: 10px; font-weight: 700; padding: 2px 5px; border-radius: 4px; background: #0a7; color: #fff; }
+.tag { font-size: 10px; font-weight: 700; padding: 2px 5px; border-radius: 4px; background: #029975; color: #fff; }
 .name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #bbb; }
-button { background: #0a7; color: #fff; border: 0; border-radius: 4px; padding: 5px 10px; cursor: pointer; }
+button { background: #029975; color: #fff; border: 0; border-radius: 4px; padding: 5px 10px; cursor: pointer; }
 p { color: #999; }
-section { display: flex; gap: 8px; align-items: center; background: #1d1d1d; border: 1px solid #0a7; border-radius: 6px; padding: 8px; margin-bottom: 8px; }
+section { display: flex; gap: 8px; align-items: center; background: #1d1d1d; border: 1px solid #029975; border-radius: 6px; padding: 8px; margin-bottom: 8px; }
 section span { flex: 1; color: #bbb; }
 header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
 header h1 { margin: 0; }
-button.link { background: transparent; color: #0a7; padding: 2px 4px; }
+h1.brand { display: flex; align-items: center; gap: 6px; color: #029975; }
+h1.brand img { width: 22px; height: 22px; }
+button.link { background: transparent; color: #029975; padding: 2px 4px; }

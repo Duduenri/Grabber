@@ -1,6 +1,19 @@
-# Grabber
+<p align="center">
+  <img src="assets/brand/wordmark.png" alt="Grabber" width="420" />
+</p>
 
-Chrome extension (Manifest V3) that detects videos on the current page and downloads them locally.
+<p align="center">
+  <b>Grab any video on the page. Watch it offline.</b><br />
+  Chrome extension (Manifest V3) that detects videos on the current page and downloads them locally.
+</p>
+
+<p align="center">
+  <img alt="Manifest V3" src="https://img.shields.io/badge/Manifest-V3-029975" />
+  <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-WXT-029975" />
+  <img alt="yt-dlp" src="https://img.shields.io/badge/YouTube-yt--dlp-029975" />
+</p>
+
+## Features
 
 - Captures `.m3u8` (HLS) and `.mp4` requests per tab, including inside iframes
 - Parses HLS master/media playlists, lets you pick the quality
@@ -91,6 +104,18 @@ DRM-protected streams (Widevine: Netflix, Prime, etc.) are not supported.
 | `lib/transmux.ts` | TS → MP4 via mux.js |
 | `native-host/` | Python yt-dlp bridge + installer |
 
+## Brand
+
+| Asset | File |
+|---|---|
+| Symbol | `assets/brand/logo.png` |
+| Wordmark | `assets/brand/wordmark.png` |
+| Extension icons | `public/icon/{16,32,48,128}.png` |
+| Brand green | `#029975` |
+
 ---
 
-Desenvolvido por [Eduardo Enrique](https://www.linkedin.com/in/duduenri)
+<p align="center">
+  <img src="assets/brand/logo.png" alt="" width="56" /><br />
+  Desenvolvido por <a href="https://www.linkedin.com/in/duduenri">Eduardo Enrique</a>
+</p>
