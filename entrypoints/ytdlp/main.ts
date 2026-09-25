@@ -13,6 +13,7 @@ const presetSelect = $<HTMLSelectElement>('#preset');
 const startButton = $<HTMLButtonElement>('#start');
 const progress = $<HTMLProgressElement>('#progress');
 const logBox = $<HTMLPreElement>('#log');
+$<HTMLButtonElement>('#open-player').onclick = () => browser.tabs.create({ url: browser.runtime.getURL('/player.html') });
 
 const url = new URLSearchParams(location.search).get('url') ?? '';
 urlInput.value = url;
@@ -46,9 +47,6 @@ function download() {
       progress.value = 100;
       startButton.textContent = 'Concluído ✓';
       log(`\nSalvo em: ${msg.file ?? '~/Downloads'}`);
-      const openPlayer = $<HTMLButtonElement>('#open-player');
-      openPlayer.hidden = false;
-      openPlayer.onclick = () => browser.tabs.create({ url: browser.runtime.getURL('/player.html') });
     } else if (msg.type === 'error') {
       finished = true;
       startButton.textContent = 'Falhou';

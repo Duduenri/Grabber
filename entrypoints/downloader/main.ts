@@ -12,6 +12,7 @@ const formatSelect = $<HTMLSelectElement>('#format');
 const startButton = $<HTMLButtonElement>('#start');
 const progress = $<HTMLProgressElement>('#progress');
 const logBox = $<HTMLPreElement>('#log');
+$<HTMLButtonElement>('#open-player').onclick = () => browser.tabs.create({ url: browser.runtime.getURL('/player.html') });
 
 const params = new URLSearchParams(location.search);
 const src = params.get('src')!;
@@ -170,9 +171,6 @@ function showPlayer(track: Track) {
     preview.src = URL.createObjectURL(track.blob);
     preview.hidden = false;
   }
-  const openPlayer = $<HTMLButtonElement>('#open-player');
-  openPlayer.hidden = false;
-  openPlayer.onclick = () => browser.tabs.create({ url: browser.runtime.getURL('/player.html') });
 }
 
 function variantLabel(v: Variant) {
