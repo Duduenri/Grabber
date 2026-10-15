@@ -8,7 +8,7 @@ const FIREFOX_ID = 'grabber@duduenri';
 
 export default defineConfig({
   webExt: { disabled: true },
-  zip: { excludeSources: ['native-host/run.sh'] },
+  zip: { excludeSources: ['native-host/run.sh', 'native-host/run.bat', 'native-host/com.grabber.host*.json'] },
   manifestVersion: 3,
   manifest: ({ browser }) => ({
     name: 'Grabber',

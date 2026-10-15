@@ -26,7 +26,9 @@
 
 1. Download `grabber-<version>-chrome.zip` from [Releases](https://github.com/Duduenri/Grabber/releases/latest) and unzip it to a folder you will keep
 2. Open `chrome://extensions`, enable **Developer mode**, click **Load unpacked** and pick that folder
-3. Optional, for YouTube: download `grabber-native-host-<version>.zip`, unzip it somewhere permanent and run `bash install.sh` (see [YouTube / yt-dlp](#youtube--yt-dlp-optional) for requirements)
+3. Optional, for YouTube: download `grabber-native-host-<version>.zip`, unzip it somewhere permanent and run `install.bat` (Windows, double-click) or `bash install.sh` (Linux) (see [YouTube / yt-dlp](#youtube--yt-dlp-optional) for requirements)
+
+Works in any Chromium browser (Chrome, Vivaldi, Edge, Brave): use its extensions page, e.g. `vivaldi://extensions`.
 
 ## Setup (from source)
 
@@ -46,11 +48,16 @@ Browser differences:
 |---|---|---|
 | Extension ID | `cmjilacbcoijmjemgcjpmbndepbibjje` (manifest `key`) | `grabber@duduenri` |
 | Player opens yt-dlp files from disk | yes, after enabling *Allow access to file URLs* | no (browser restriction) — drag the file in |
-| Native host manifest | `~/.config/<browser>/NativeMessagingHosts/` | `~/.mozilla/native-messaging-hosts/` |
+| Native host manifest (Linux) | `~/.config/<browser>/NativeMessagingHosts/` | `~/.mozilla/native-messaging-hosts/` |
+| Native host manifest (Windows) | `HKCU\Software\<browser>\NativeMessagingHosts\com.grabber.host` | `HKCU\Software\Mozilla\NativeMessagingHosts\com.grabber.host` |
 
 ### YouTube / yt-dlp (optional)
 
 YouTube does not serve plain HLS/MP4 (it uses its own streaming protocol with signed, rotating URLs), so Grabber delegates it to yt-dlp running on your machine.
+
+**Windows:** double-click `native-host/install.bat`. It installs whatever is missing with `winget` (Python, yt-dlp, ffmpeg, Deno), writes `run.bat` with your current `PATH`, registers the host for Chrome, Vivaldi, Edge, Brave, Chromium and Firefox, and runs a self-test. Restart the browser afterwards. Run it again if you move the folder.
+
+**Linux:**
 
 1. Install yt-dlp (use the official binary — distro packages are usually too old for YouTube):
 
@@ -60,7 +67,7 @@ YouTube does not serve plain HLS/MP4 (it uses its own streaming protocol with si
    ```
 
 2. Install ffmpeg (merges audio + video): `sudo apt install ffmpeg`
-3. Register the native host for Chrome/Chromium/Brave/Firefox:
+3. Register the native host for Chrome/Chromium/Brave/Vivaldi/Edge/Firefox:
 
    ```bash
    ./native-host/install.sh
@@ -70,7 +77,7 @@ YouTube does not serve plain HLS/MP4 (it uses its own streaming protocol with si
 
 The extension ID is pinned via `key` in `wxt.config.ts` (`cmjilacbcoijmjemgcjpmbndepbibjje`), which is what the host manifest allows.
 
-Files are saved to `~/Downloads`. Keep yt-dlp updated: `yt-dlp -U`.
+Files are saved to `~/Downloads`. Keep yt-dlp updated: `yt-dlp -U` (Linux) or `winget upgrade yt-dlp.yt-dlp` (Windows).
 
 Without the host, you can run it manually:
 
@@ -121,7 +128,7 @@ DRM-protected streams (Widevine: Netflix, Prime, etc.) are not supported.
 | `entrypoints/player/` | offline player with resume and speed control |
 | `lib/hls.ts` | HLS playlist parser |
 | `lib/transmux.ts` | TS → MP4 via mux.js |
-| `native-host/` | Python yt-dlp bridge + installer |
+| `native-host/` | Python yt-dlp bridge + installers (`install.sh` Linux, `install.bat`/`install.ps1` Windows) |
 
 ## Brand
 

@@ -28,7 +28,11 @@ const storageSet = (key: string, value: string) => {
 
 const positionKey = (item: Item) => `pos:${item.key}`;
 const fromFile = (file: Blob, name: string): Item => ({ name, key: `${name}:${file.size}`, size: file.size, source: file });
-const fileUrl = (path: string) => 'file://' + path.split('/').map(encodeURIComponent).join('/');
+const fileUrl = (path: string) => {
+  const parts = path.replace(/\\/g, '/').split('/');
+  const drive = /^[A-Za-z]:$/.test(parts[0] ?? '');
+  return (drive ? 'file:///' : 'file://') + parts.map((p, i) => (drive && i === 0 ? p : encodeURIComponent(p))).join('/');
+};
 
 const formatTime = (s: number) => {
   const m = Math.floor(s / 60);
@@ -154,7 +158,7 @@ async function openFromParams() {
   }
 
   if (path) {
-    const name = path.split('/').pop() ?? path;
+    const name = path.split(/[\\/]/).pop() ?? path;
     if (import.meta.env.FIREFOX) {
       notice(`O Firefox não deixa extensões abrirem arquivos do disco. Arraste "${name}" (em ${path.slice(0, -name.length - 1)}) aqui.`);
       return;

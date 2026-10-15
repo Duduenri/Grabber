@@ -8,6 +8,12 @@ import subprocess
 import sys
 import threading
 
+if sys.platform == "win32":
+    import msvcrt
+
+    msvcrt.setmode(sys.stdin.fileno(), os.O_BINARY)
+    msvcrt.setmode(sys.stdout.fileno(), os.O_BINARY)
+
 OUTPUT_DIR = os.path.expanduser("~/Downloads")
 
 PRESETS = {
@@ -19,6 +25,8 @@ PRESETS = {
 
 PROGRESS = re.compile(r"^GRAB_PROGRESS\s+(\S+)\|(.*)\|(.*)$")
 FILE = re.compile(r"^GRAB_FILE (.+)$")
+
+NO_WINDOW = getattr(subprocess, "CREATE_NO_WINDOW", 0)
 
 write_lock = threading.Lock()
 
@@ -42,7 +50,7 @@ def ytdlp_version():
     binary = shutil.which("yt-dlp")
     if not binary:
         return None
-    return subprocess.run([binary, "--version"], capture_output=True, text=True).stdout.strip()
+    return subprocess.run([binary, "--version"], capture_output=True, text=True, creationflags=NO_WINDOW).stdout.strip()
 
 
 def js_runtime_args():
@@ -75,7 +83,17 @@ def download(url, preset):
         "--no-simulate",
         url,
     ]
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1)
+    proc = subprocess.Popen(
+        cmd,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        bufsize=1,
+        env={**os.environ, "PYTHONIOENCODING": "utf-8", "PYTHONUTF8": "1"},
+        creationflags=NO_WINDOW,
+    )
 
     def watch_disconnect():
         while read() is not None:

@@ -3,3 +3,5 @@ node_modules
 .wxt
 *.html.local
 native-host/run.sh
+native-host/run.bat
+native-host/com.grabber.host*.json

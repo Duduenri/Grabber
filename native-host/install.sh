@@ -19,6 +19,9 @@ DIRS=(
   "$HOME/.config/google-chrome/NativeMessagingHosts"
   "$HOME/.config/chromium/NativeMessagingHosts"
   "$HOME/.config/BraveSoftware/Brave-Browser/NativeMessagingHosts"
+  "$HOME/.config/vivaldi/NativeMessagingHosts"
+  "$HOME/.config/vivaldi-snapshot/NativeMessagingHosts"
+  "$HOME/.config/microsoft-edge/NativeMessagingHosts"
 )
 
 for dir in "${DIRS[@]}"; do

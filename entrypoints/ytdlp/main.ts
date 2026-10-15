@@ -71,7 +71,7 @@ async function init() {
   try {
     const pong = (await browser.runtime.sendNativeMessage(HOST, { type: 'ping' })) as HostMessage;
     if (pong.type !== 'pong' || !pong.ytdlp) {
-      log('yt-dlp não encontrado. Rode native-host/install.sh e veja o README.');
+      log('yt-dlp não encontrado. Rode o instalador do host (install.bat no Windows, install.sh no Linux) e veja o README.');
       startButton.textContent = 'yt-dlp ausente';
       return;
     }
@@ -82,7 +82,7 @@ async function init() {
   } catch (err) {
     startButton.textContent = 'Host não instalado';
     log(`Host nativo não encontrado (${err instanceof Error ? err.message : err}).`);
-    log('Instale com: ./native-host/install.sh');
+    log('Instale com: install.bat (Windows) ou ./native-host/install.sh (Linux)');
     log(`\nOu rode no terminal:\nyt-dlp -S "vcodec:h264,res:1080,acodec:m4a" --merge-output-format mp4 "${url}"`);
   }
 }
